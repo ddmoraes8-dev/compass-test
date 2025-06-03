@@ -1,7 +1,10 @@
 package br.com.sicredi.pautas.service;
 
+import br.com.sicredi.pautas.dto.ControleSessaoDTO;
+import br.com.sicredi.pautas.dto.PautaDTO;
 import br.com.sicredi.pautas.entity.ControleSessao;
 import br.com.sicredi.pautas.entity.Pauta;
+import br.com.sicredi.pautas.mapper.ControleSessaoMapper;
 import br.com.sicredi.pautas.repository.ControleSessaoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -14,14 +17,17 @@ public class ControleSessaoService {
     private final ControleSessaoRepository controleSessaoRepository;
     private final PautaService pautaService;
 
-    public ControleSessaoService(ControleSessaoRepository controleSessaoRepository, PautaService pautaService) {
+    private final ControleSessaoMapper controleSessaoMapper;
+
+    public ControleSessaoService(ControleSessaoRepository controleSessaoRepository, PautaService pautaService, ControleSessaoMapper controleSessaoMapper) {
         this.controleSessaoRepository = controleSessaoRepository;
         this.pautaService = pautaService;
+        this.controleSessaoMapper = controleSessaoMapper;
     }
 
     @Transactional
-    public ControleSessao abrirSessao(Long pautaId, Integer duracaoEmMinutos) {
-        Pauta pauta = pautaService.buscarPorId(pautaId);
+    public ControleSessaoDTO abrirSessao(Long pautaId, Integer duracaoEmMinutos) {
+        PautaDTO pauta = pautaService.buscarPorId(pautaId);
 
         if (controleSessaoRepository.findByPautaId(pautaId) != null) {
             throw new RuntimeException("Sessão já aberta para esta pauta.");
@@ -30,12 +36,15 @@ public class ControleSessaoService {
         LocalDateTime agora = LocalDateTime.now();
         LocalDateTime fechamento = agora.plusMinutes(duracaoEmMinutos != null ? duracaoEmMinutos : 1);
 
-        ControleSessao sessao = new ControleSessao();
-        sessao.setPauta(pauta);
-        sessao.setDataAbertura(agora);
-        sessao.setDataFechamento(fechamento);
+        ControleSessaoDTO controleSessaoDTO = ControleSessaoDTO.builder()
+                .dataAbertura(agora)
+                .dataFechamento(fechamento)
+                .pautaId(pauta.getId())
+                .build();
 
-        return controleSessaoRepository.save(sessao);
+        final var controleSessao = controleSessaoRepository.save(controleSessaoMapper.toControleSessao(controleSessaoDTO));
+
+        return controleSessaoMapper.toControleSessaoDTO(controleSessao);
     }
 
     public boolean isSessaoAberta(Long pautaId) {

@@ -1,5 +1,6 @@
 package br.com.sicredi.pautas.controller;
 
+import br.com.sicredi.pautas.dto.VotoDTO;
 import br.com.sicredi.pautas.entity.Voto;
 import br.com.sicredi.pautas.service.VotoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ public class VotoController {
 
     @Operation(summary = "Registrar um voto em uma pauta")
     @PostMapping
-    public Voto votar(
+    public VotoDTO votar(
             @RequestParam Long pautaId,
             @RequestParam String cpf,
             @RequestParam Boolean voto

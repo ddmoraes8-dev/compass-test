@@ -1,5 +1,6 @@
 package br.com.sicredi.pautas.controller;
 
+import br.com.sicredi.pautas.dto.ControleSessaoDTO;
 import br.com.sicredi.pautas.entity.ControleSessao;
 import br.com.sicredi.pautas.service.ControleSessaoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +20,7 @@ public class SessaoController {
 
     @Operation(summary = "Abrir uma sessão para uma pauta")
     @PostMapping("/abrir")
-    public ControleSessao abrirSessao(
+    public ControleSessaoDTO abrirSessao(
             @RequestParam Long pautaId,
             @RequestParam(required = false) Integer duracaoEmMinutos
     ) {

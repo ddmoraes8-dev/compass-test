@@ -1,5 +1,6 @@
 package br.com.sicredi.pautas.controller;
 
+import br.com.sicredi.pautas.dto.UsuarioDTO;
 import br.com.sicredi.pautas.entity.Usuario;
 import br.com.sicredi.pautas.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +23,7 @@ public class UsuarioController {
 
     @Operation(summary = "Criar um novo usuário")
     @PostMapping
-    public Usuario criar(@RequestBody Usuario usuario) {
+    public UsuarioDTO criar(@RequestBody UsuarioDTO usuario) {
         return usuarioService.criarUsuario(usuario);
     }
 }

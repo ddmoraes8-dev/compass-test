@@ -1,5 +1,6 @@
 package br.com.sicredi.pautas.controller;
 
+import br.com.sicredi.pautas.dto.PautaDTO;
 import br.com.sicredi.pautas.entity.Pauta;
 import br.com.sicredi.pautas.service.PautaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,13 +28,13 @@ public class PautaController {
 
     @Operation(summary = "Criar uma nova pauta")
     @PostMapping
-    public Pauta criar(@RequestParam String nome) {
+    public PautaDTO criar(@RequestParam String nome) {
         return pautaService.criarPauta(nome);
     }
 
     @Operation(summary = "Buscar uma pauta por ID")
     @GetMapping("/{id}")
-    public Pauta buscarPorId(@PathVariable Long id) {
+    public PautaDTO buscarPorId(@PathVariable Long id) {
         return pautaService.buscarPorId(id);
     }
 }
