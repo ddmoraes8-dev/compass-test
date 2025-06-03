@@ -25,11 +25,11 @@ public class Voto {
     private Pauta pauta;
 
     @ManyToOne
-    @JoinColumn(name = "cpf_usuario", nullable = false)
+    @JoinColumn(name = "cpf", nullable = false)
     private Usuario usuario;
 
     @Column(nullable = false)
-    private Boolean voto; // true = SIM, false = NÃO
+    private Boolean voto;
 
     @Column(name = "data_voto", nullable = false)
     private LocalDateTime dataVoto = LocalDateTime.now();
