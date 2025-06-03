@@ -3,11 +3,11 @@ package br.com.sicredi.pautas.service;
 import br.com.sicredi.pautas.dto.ControleSessaoDTO;
 import br.com.sicredi.pautas.dto.PautaDTO;
 import br.com.sicredi.pautas.entity.ControleSessao;
-import br.com.sicredi.pautas.entity.Pauta;
+import br.com.sicredi.pautas.exception.SessaoJaAbertaException; // Importar
 import br.com.sicredi.pautas.mapper.ControleSessaoMapper;
 import br.com.sicredi.pautas.repository.ControleSessaoRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +16,6 @@ public class ControleSessaoService {
 
     private final ControleSessaoRepository controleSessaoRepository;
     private final PautaService pautaService;
-
     private final ControleSessaoMapper controleSessaoMapper;
 
     public ControleSessaoService(ControleSessaoRepository controleSessaoRepository, PautaService pautaService, ControleSessaoMapper controleSessaoMapper) {
@@ -30,11 +29,11 @@ public class ControleSessaoService {
         PautaDTO pauta = pautaService.buscarPorId(pautaId);
 
         if (controleSessaoRepository.findByPautaId(pautaId) != null) {
-            throw new RuntimeException("Sessão já aberta para esta pauta.");
+            throw new SessaoJaAbertaException("Sessão já aberta para esta pauta.");
         }
 
         LocalDateTime agora = LocalDateTime.now();
-        LocalDateTime fechamento = agora.plusMinutes(duracaoEmMinutos != null ? duracaoEmMinutos : 1);
+        LocalDateTime fechamento = agora.plusMinutes(duracaoEmMinutos != null && duracaoEmMinutos >= 1 ? duracaoEmMinutos : 1);
 
         ControleSessaoDTO controleSessaoDTO = ControleSessaoDTO.builder()
                 .dataAbertura(agora)

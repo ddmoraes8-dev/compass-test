@@ -3,7 +3,9 @@ package br.com.sicredi.pautas.service;
 import br.com.sicredi.pautas.dto.PautaDTO;
 import br.com.sicredi.pautas.dto.UsuarioDTO;
 import br.com.sicredi.pautas.dto.VotoDTO;
-import br.com.sicredi.pautas.entity.Voto;
+import br.com.sicredi.pautas.exception.RecursoNaoEncontradoException; // Importar nova exceção
+import br.com.sicredi.pautas.exception.SessaoFechadaException;      // Importar nova exceção
+import br.com.sicredi.pautas.exception.VotoDuplicadoException;      // Importar nova exceção
 import br.com.sicredi.pautas.mapper.UsuarioMapper;
 import br.com.sicredi.pautas.mapper.VotoMapper;
 import br.com.sicredi.pautas.repository.UsuarioRepository;
@@ -38,15 +40,15 @@ public class VotoService {
     @Transactional
     public VotoDTO votar(Long pautaId, String cpf, Boolean voto) {
         if (!controleSessaoService.isSessaoAberta(pautaId)) {
-            throw new RuntimeException("Sessão fechada para esta pauta.");
+            throw new SessaoFechadaException("Sessão fechada para esta pauta.");
         }
 
         if (votoRepository.existsByPautaIdAndUsuarioCpf(pautaId, cpf)) {
-            throw new RuntimeException("Usuário já votou nesta pauta.");
+            throw new VotoDuplicadoException("Usuário já votou nesta pauta.");
         }
 
         UsuarioDTO usuario = usuarioMapper.toUsuarioDTO(usuarioRepository.findById(cpf)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado.")));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado.")));
 
         PautaDTO pauta = pautaService.buscarPorId(pautaId);
 
@@ -69,4 +71,3 @@ public class VotoService {
         return votoRepository.countByPautaIdAndVoto(pautaId, false);
     }
 }
-
