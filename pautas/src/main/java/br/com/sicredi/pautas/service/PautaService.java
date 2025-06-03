@@ -38,7 +38,7 @@ public class PautaService {
 
     public PautaDTO buscarPorId(Long id) {
         Pauta pauta = pautaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada com o ID: " + id)); // Lança a exceção personalizada
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada com o ID: " + id));
 
         return pautaMapper.toPautaDTO(pauta);
     }
